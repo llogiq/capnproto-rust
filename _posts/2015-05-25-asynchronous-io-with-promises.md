@@ -60,7 +60,9 @@ To use a promise, you register a callback with the `then()` method.
 For example:
 
 {% highlight rust %}
-pub fn connect_then_write(addr: gj::io::NetworkAddress) -> gj::Promise<()> {
+pub fn connect_then_write(addr: gj::io::NetworkAddress)
+                         -> gj::Promise<()>
+{
     return addr.connect().then(|stream| {
        // The connection has succeeded. Let's write some data.
        return Ok(stream.write(vec![1,2,3]));

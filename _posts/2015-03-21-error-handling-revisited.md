@@ -28,7 +28,7 @@ with such errors in a principled manner.
 Here is what a small example looks like after the changes:
 
 {% highlight rust %}
-pub fn print_address_book(address_book : address_book::Reader)
+pub fn print_address_book(address_book: address_book::Reader)
                           -> ::std::result::Result<(), ::capnp::Error> {
     for person in try!(address_book.get_people()).iter() {
         println!("{}: {}", try!(person.get_name()),
@@ -38,7 +38,7 @@ pub fn print_address_book(address_book : address_book::Reader)
                 Ok(person::phone_number::Type::Mobile) => {"mobile"}
                 Ok(person::phone_number::Type::Home) => {"home"}
                 Ok(person::phone_number::Type::Work) => {"work"}
-                Err(::capnp::NotInSchema(_)) => {"UNKNOWN"}
+                Err(::capnp::NotInSchema(n)) => {"UNKNOWN"}
             };
             println!("  {} phone: {}", type_name, try!(phone.get_number()));
         }
