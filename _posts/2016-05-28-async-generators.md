@@ -156,7 +156,9 @@ pub trait AsyncRead {
     {
        let n = try!(yield from self.try_read(buf, min_bytes));
        if n < min_bytes {
-           Err(Error::new(ErrorKind::UnexpectedEof, ""))
+           Err(Error::new(ErrorKind::UnexpectedEof,
+                          format!("expected {} but got {} bytes",
+                                  min_bytes, n)))
        } else {
            Ok(n)
        }
