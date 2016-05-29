@@ -132,16 +132,15 @@ enum AsyncStatus {
 
 pub trait AsyncWrite {
     /// Attempts to write all buf.len() bytes from buf into the
-    /// stream. Returns buf once all of the bytes have been
-    /// written.
+    /// stream. Returns once all of the bytes have been written.
     fn write(&mut self, bytes: &[u8]) -<AsyncStatus>-> Result<()>;
 }
 
 pub trait AsyncRead {
     /// Attempts to read buf.len() bytes from the stream,
-    /// writing them into buf. Returns the modified buf, and
-    /// the number of bytes actually read. Returns as soon as
-    /// min_bytes are read or EOF is encountered.
+    /// writing them into buf. Returns the number of bytes
+    /// actually read. Returns as soon as min_bytes are
+    /// read or EOF is encountered.
     fn try_read(&mut self,
                 buf: &mut [u8],
                 min_bytes: usize)
