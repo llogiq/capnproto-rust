@@ -14,7 +14,7 @@ and
 [javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators#Generators)
 could make certain things much nicer,
 but how often does one really need to have
-what appears be nothing more than a fancy iterator?
+what appears to be nothing more than a fancy iterator?
 It wasn't until I followed
 this [Rust RFC thread](https://github.com/rust-lang/rfcs/issues/1081)
 that the true potential of generators in Rust started to dawn on me.
