@@ -48,7 +48,7 @@ values that implement `Generator`. For example:
 fn fib_with_sum(n: usize) -<u64>-> u64 {
      let mut a = 0;
      let mut b = 1;
-     let sum = 0;
+     let mut sum = 0;
      for _ in 0..n {
          yield a; // <--- new keyword "yield"
          sum += a;
