@@ -182,3 +182,5 @@ Unlike with fibers/green threading, it remains very clear where
 switches-between-tasks can take place.
 Unlike with promises, we don't have to be constantly allocating closures
 on the heap. Generator-based async-I/O seems like an all-around win!
+
+[(discussion on /r/rust)](https://www.reddit.com/r/rust/comments/4li9v2/generators_are_the_missing_piece_for_async/)
