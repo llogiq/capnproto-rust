@@ -50,7 +50,7 @@ to make asynchronous HTTP requests.
 
 There are many exciting possibilities to explore.
 If any of this sounds interesting to you, I encourage you to get involved!
-Join me for discussion at \#sandstorm on freenode or at the
+Join me for discussion at \#sandstorm on freenode IRC or at the
 [tokio gitter](https://gitter.im/tokio-rs/tokio).
 
 
