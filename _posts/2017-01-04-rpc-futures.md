@@ -25,7 +25,7 @@ be ready yet. To migrate to futures-rs, each `gj::Promise<T,E>` can be translate
 a `Box<futures::Future<Item=T,Error=E>>`,
 and the high-level structure of a program usually does not need to change.
 
-Many nice proporties derive from the fact that `Future` is a *trait*, not a struct,
+Many nice properties derive from the fact that `Future` is a *trait*, not a struct,
 and does not need to be put in a `Box`.
 Concrete types implementing `Future` can be used in generics,
 making it possible for combinators like `.then()` and `.join()`
