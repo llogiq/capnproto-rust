@@ -14,7 +14,7 @@ The main gj crate still defines the core `Promise`
 and `EventLoop` structures,
 but gjio implements all the specifics about how events are
 received from the outside world.
-The [`EventPort`](https://docs.capnproto-rust.org/gj/trait.EventPort.html) trait
+The [`EventPort`](https://docs.rs/gjio/0.1.3/gjio/struct.EventPort.html) trait
 is the hook that allows gj to use those specifics.
 If for whatever reason you decide you don't like gjio, you can write your own
 `EventPort` impelemention and still use gj.
@@ -22,8 +22,8 @@ If for whatever reason you decide you don't like gjio, you can write your own
 As I've moved the `gj::io` module into its own crate,
 I've taken the opportunity to iterate somewhat on the design.
 Probably the most prominent change is
-that the methods of [`AsyncRead`](https://docs.capnproto-rust.org/gjio/trait.AsyncRead.html)
-and [`AsyncWrite`](https://docs.capnproto-rust.org/gjio/trait.AsyncWrite.html)
+that the methods of [`AsyncRead`](https://docs.rs/gjio/0.1.3/gjio/trait.AsyncRead.html)
+and [`AsyncWrite`](https://docs.rs/gjio/0.1.3/gjio/trait.AsyncWrite.html)
 now take `self` by reference
 rather than by move, which I think is an ergnomonic win.
 Judge for yourself by checking out the
