@@ -1,7 +1,7 @@
 # Cap'n Proto for Rust
 
-[![Build Status](https://travis-ci.org/anrudo/capnproto-rust.svg?branch=master)](https://travis-ci.org/anrudo/capnproto-rust)
-[![Build status](https://ci.appveyor.com/api/projects/status/6wvp6hmi4etlyhp8?svg=true)](https://ci.appveyor.com/project/anrudo/capnproto-rust?svg=true)
+[![Build Status](https://travis-ci.org/llogiq/capnproto-rust.svg?branch=master)](https://travis-ci.org/llogiq/capnproto-rust)
+[![Windows build status](https://ci.appveyor.com/api/projects/status/github/llogiq/capnproto-rust?svg=true)](https://ci.appveyor.com/project/llogiq/capnproto-rust)
 [![crates.io](http://meritbadge.herokuapp.com/capnp)](https://crates.io/crates/capnp)
 
 [documentation](https://docs.capnproto-rust.org/capnp/)
