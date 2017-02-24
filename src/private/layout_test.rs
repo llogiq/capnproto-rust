@@ -25,10 +25,10 @@ use Word;
 fn simple_raw_data_struct() {
     let data: &[Word] = &[
         capnp_word!(0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00),
-        capnp_word!(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef)
-    ];
+        capnp_word!(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef)];
 
-    let reader = ::private::layout::PointerReader::get_root_unchecked(data.as_ptr())
+    let reader =
+        ::private::layout::PointerReader::get_root_unchecked(data.as_ptr())
         .get_struct(::std::ptr::null())
         .unwrap();
 
@@ -92,13 +92,15 @@ fn bool_list() {
 
     let data: &[Word] = &[
         capnp_word!(0x01, 0x00, 0x00, 0x00, 0x51, 0x00, 0x00, 0x00),
-        capnp_word!(0x75, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
-    ];
+        capnp_word!(0x75, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)];
 
 
-    let pointer_reader = ::private::layout::PointerReader::get_root_unchecked(data.as_ptr());
+    let pointer_reader =
+        ::private::layout::PointerReader::get_root_unchecked(data.as_ptr());
 
-    let reader = pointer_reader.get_list(::private::layout::ElementSize::Bit, ::std::ptr::null())
+    let reader =
+        pointer_reader
+        .get_list(::private::layout::ElementSize::Bit, ::std::ptr::null())
         .unwrap();
 
     assert_eq!(reader.len(), 10);
@@ -114,7 +116,9 @@ fn bool_list() {
     assert_eq!(bool::get(&reader, 9), true);
 
 
-    let reader = ::primitive_list::Reader::<bool>::get_from_pointer(&pointer_reader).unwrap();
+    let reader =
+        ::primitive_list::Reader::<bool>::get_from_pointer(&pointer_reader)
+        .unwrap();
 
     assert_eq!(reader.len(), 10);
     assert_eq!(reader.get(0), true);
@@ -135,10 +139,10 @@ fn struct_size() {
         capnp_word!(0x00, 0x00, 0x00, 0x00, 0x2, 0x00, 0x01, 0x00),
         capnp_word!(0x0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
         capnp_word!(0x0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
-        capnp_word!(0x0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
-    ];
+        capnp_word!(0x0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)];
 
-    let pointer_reader = ::private::layout::PointerReader::get_root_unchecked(data.as_ptr());
+    let pointer_reader =
+        ::private::layout::PointerReader::get_root_unchecked(data.as_ptr());
 
     assert_eq!(pointer_reader.total_size().unwrap().word_count, 3);
 }
@@ -151,15 +155,15 @@ fn struct_list_size() {
         capnp_word!(0x4, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00), // 1 element long
         capnp_word!(0x0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
         capnp_word!(0x0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
-        capnp_word!(0x0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
-    ];
+        capnp_word!(0x0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)];
 
     // The list pointer claims that the list consumes four words, but the struct
     // tag says there is only one element and it has a size of one word.
     // So there is an inconsistency! total_size() should report the value computed from
     // the struct tag, because that's what is relevent when the data is copied.
 
-    let pointer_reader = ::private::layout::PointerReader::get_root_unchecked(data.as_ptr());
+    let pointer_reader =
+        ::private::layout::PointerReader::get_root_unchecked(data.as_ptr());
 
     assert_eq!(pointer_reader.total_size().unwrap().word_count, 2);
 }
