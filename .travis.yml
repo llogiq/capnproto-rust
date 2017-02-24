@@ -12,3 +12,6 @@ script:
   - cargo build --features rpc
   - cargo test --features rpc
   - cargo doc --features rpc
+os:
+  - linux
+  - osx
