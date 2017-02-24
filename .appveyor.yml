@@ -1,4 +1,6 @@
 # Appveyor configuration template for Rust using rustup for Rust installation
+# This has been shamelessly stolen from https://github.com/starkat99, so if you want to steal it from me
+# it might suit your ends better to go steal it from her instead. Her Rust game is far higher up than mine ;)
 # https://github.com/starkat99/appveyor-rust
 
 ## Operating System (VM environment) ##
