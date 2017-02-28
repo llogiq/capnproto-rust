@@ -72,20 +72,20 @@ impl Default for ReaderOptions {
 impl ReaderOptions {
     pub fn new() -> ReaderOptions { DEFAULT_READER_OPTIONS }
 
-    pub fn nesting_limit<'a>(&'a mut self, value: i32) -> &'a mut ReaderOptions {
+    pub fn nesting_limit(&mut self, value: i32) -> &mut ReaderOptions {
         self.nesting_limit = value;
-        return self;
+        self
     }
 
-    pub fn traversal_limit_in_words<'a>(&'a mut self, value: u64) -> &'a mut ReaderOptions {
+    pub fn traversal_limit_in_words(&mut self, value: u64) -> &mut ReaderOptions {
         self.traversal_limit_in_words = value;
-        return self;
+        self
     }
 }
 
 /// An object that manages the buffers underlying a Cap'n Proto message reader.
 pub trait ReaderSegments {
-    fn get_segment<'a>(&'a self, id: u32) -> Option<&'a [Word]>;
+    fn get_segment(&self, id: u32) -> Option<&[Word]>;
 }
 
 /// An array of segments.
@@ -100,7 +100,7 @@ impl <'a> SegmentArray<'a> {
 }
 
 impl <'b> ReaderSegments for SegmentArray<'b> {
-    fn get_segment<'a>(&'a self, id: u32) -> Option<&'a [Word]> {
+    fn get_segment(&self, id: u32) -> Option<&[Word]> {
         self.segments.get(id as usize).map(|slice| *slice)
     }
 }
@@ -119,7 +119,7 @@ impl <S> Reader<S> where S: ReaderSegments {
         }
     }
 
-    fn get_root_internal<'a>(&'a self) -> Result<any_pointer::Reader<'a>> {
+    fn get_root_internal(&self) -> Result<any_pointer::Reader> {
         let (segment_start, _seg_len) = try!(self.arena.get_segment(0));
         let pointer_reader = try!(layout::PointerReader::get_root(
             &self.arena, 0, segment_start, self.nesting_limit));
@@ -191,7 +191,7 @@ impl <A> Builder<A> where A: Allocator {
         }
     }
 
-    fn get_root_internal<'a>(&'a mut self) -> any_pointer::Builder<'a> {
+    fn get_root_internal(&mut self) -> any_pointer::Builder {
         use ::traits::ImbueMut;
         if self.arena.len() == 0 {
             self.arena.allocate_segment(1).expect("allocate root pointer");
@@ -239,7 +239,7 @@ impl <A> Builder<A> where A: Allocator {
         root.set_as(value)
     }
 
-    pub fn get_segments_for_output<'a>(&'a self) -> OutputSegments<'a> {
+    pub fn get_segments_for_output(&self) -> OutputSegments {
         self.arena.get_segments_for_output()
     }
 }
@@ -285,9 +285,8 @@ unsafe impl Allocator for HeapAllocator {
         let ptr = new_words.as_mut_ptr();
         self.owned_memory.push(new_words);
 
-        match self.allocation_strategy {
-            AllocationStrategy::GrowHeuristically => { self.next_size += size; }
-            _ => { }
+        if let AllocationStrategy::GrowHeuristically = self.allocation_strategy {
+             self.next_size += size;
         }
         (ptr, size as u32)
     }

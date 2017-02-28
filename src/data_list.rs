@@ -39,8 +39,8 @@ pub struct Reader<'a> {
 }
 
 impl <'a> Reader<'a> {
-    pub fn new<'b>(reader : ListReader<'b>) -> Reader<'b> {
-        Reader::<'b> { reader : reader }
+    pub fn new(reader : ListReader) -> Reader {
+        Reader { reader : reader }
     }
 
     pub fn len(&self) -> u32 { self.reader.len() }
@@ -86,7 +86,7 @@ impl <'a> Builder<'a> {
         self.builder.borrow().get_pointer_element(index).set_data(value);
     }
 
-    pub fn borrow<'b>(&'b mut self) -> Builder<'b> {
+    pub fn borrow(&mut self) -> Builder {
         Builder {builder: self.builder.borrow()}
     }
 }

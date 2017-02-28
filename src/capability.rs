@@ -107,7 +107,7 @@ impl <Results> Response<Results>
     pub fn new(hook: Box<ResponseHook>) -> Response<Results> {
         Response { marker: PhantomData, hook: hook }
     }
-    pub fn get<'a>(&'a self) -> ::Result<<Results as Owned<'a>>::Reader> {
+    pub fn get(&self) -> ::Result<<Results as Owned>::Reader> {
         try!(self.hook.get()).get_as()
     }
 }
@@ -125,7 +125,7 @@ impl <Params, Results> Request<Params, Results>
         Request { hook: hook, marker: PhantomData }
     }
 
-    pub fn get<'a>(&'a mut self) -> <Params as Owned<'a>>::Builder {
+    pub fn get(&mut self) -> <Params as Owned>::Builder {
         self.hook.get().get_as().unwrap()
     }
 
@@ -181,7 +181,7 @@ impl <T> Results<T>
         Results { marker: PhantomData, hook: hook }
     }
 
-    pub fn get<'a>(&'a mut self) -> <T as Owned<'a>>::Builder {
+    pub fn get(&mut self) -> <T as Owned>::Builder {
         self.hook.get().unwrap().get_as().unwrap()
     }
 

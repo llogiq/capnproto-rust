@@ -46,7 +46,7 @@ pub struct Reader<'a> {
 
 impl <'a> Reader<'a> {
     #[inline]
-    pub fn new<'b>(reader: PointerReader<'b>) -> Reader<'b> {
+    pub fn new(reader: PointerReader) -> Reader {
         Reader { reader: reader }
     }
 
@@ -75,9 +75,9 @@ impl <'a> Reader<'a> {
         let mut pointer = self.reader;
 
         for op in ops.iter() {
-            match op {
-                &PipelineOp::Noop =>  { }
-                &PipelineOp::GetPointerField(idx) => {
+            match *op {
+                PipelineOp::Noop =>  { }
+                PipelineOp::GetPointerField(idx) => {
                     pointer = try!(pointer.get_struct(::std::ptr::null())).get_pointer_field(idx as usize);
                 }
             }
@@ -112,11 +112,11 @@ pub struct Builder<'a> {
 
 impl <'a> Builder<'a> {
     #[inline]
-    pub fn new<'b>(builder: PointerBuilder<'a>) -> Builder<'a> {
+    pub fn new(builder: PointerBuilder<'a>) -> Builder<'a> {
         Builder { builder: builder }
     }
 
-    pub fn borrow<'b>(&'b mut self) -> Builder<'b> {
+    pub fn borrow(&mut self) -> Builder {
         Builder { builder: self.builder.borrow() }
     }
 
@@ -194,9 +194,7 @@ impl Pipeline {
 
     pub fn get_pointer_field(&self, pointer_index: u16) -> Pipeline {
         let mut new_ops = Vec::with_capacity(self.ops.len() + 1);
-        for &op in self.ops.iter() {
-            new_ops.push(op)
-        }
+        new_ops.extend(&self.ops);
         new_ops.push(PipelineOp::GetPointerField(pointer_index));
         Pipeline { hook : self.hook.add_ref(), ops: new_ops }
     }

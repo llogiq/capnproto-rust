@@ -24,13 +24,13 @@ use MessageSize;
 use capability::{Params, Promise, Request, RemotePromise, Results};
 
 pub trait ResponseHook {
-    fn get<'a>(&'a self) -> ::Result<any_pointer::Reader<'a>>;
+    fn get(&self) -> ::Result<any_pointer::Reader>;
 }
 
 pub trait RequestHook {
-    fn get<'a>(&'a mut self) -> any_pointer::Builder<'a>;
+    fn get(&mut self) -> any_pointer::Builder;
     fn get_brand(&self) -> usize;
-    fn send<'a>(self: Box<Self>) -> RemotePromise<any_pointer::Owned>;
+    fn send(self: Box<Self>) -> RemotePromise<any_pointer::Owned>;
     fn tail_send(self: Box<Self>)
                  -> Option<(u32, ::capability::Promise<(), ::Error>, Box<PipelineHook>)>;
 }
@@ -92,7 +92,7 @@ pub trait ServerHook: 'static {
 }
 
 pub trait ResultsHook {
-    fn get<'a>(&'a mut self) -> ::Result<any_pointer::Builder<'a>>;
+    fn get(&mut self) -> ::Result<any_pointer::Builder>;
     fn allow_cancellation(&self);
     fn tail_call(self: Box<Self>, request: Box<RequestHook>) -> Promise<(), ::Error>;
     fn direct_tail_call(self: Box<Self>, request: Box<RequestHook>) ->
@@ -100,7 +100,7 @@ pub trait ResultsHook {
 }
 
 pub trait ParamsHook {
-    fn get<'a>(&'a self) -> ::Result<any_pointer::Reader<'a>>;
+    fn get(&self) -> ::Result<any_pointer::Reader>;
 }
 
 // Where should this live?

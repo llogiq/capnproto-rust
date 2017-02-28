@@ -41,8 +41,8 @@ pub struct Reader<'a, T> where T: for<'b> ::traits::Owned<'b> {
 }
 
 impl <'a, T> Reader<'a, T> where T: for<'b> ::traits::Owned<'b> {
-    pub fn new<'b>(reader: ListReader<'b>) -> Reader<'b, T> {
-        Reader::<'b, T> { reader: reader, marker: ::std::marker::PhantomData }
+    pub fn new(reader: ListReader) -> Reader<T> {
+        Reader { reader: reader, marker: ::std::marker::PhantomData }
     }
 
     pub fn len(&self) -> u32 { self.reader.len() }
@@ -100,7 +100,7 @@ impl <'a, T> Builder<'a, T> where T: for<'b> ::traits::Owned<'b> {
 }
 
 impl <'a, T> Builder<'a, T> where T: for<'b> ::traits::Owned<'b> {
-    pub fn borrow<'b>(&'b mut self) -> Builder<'b, T> {
+    pub fn borrow(&mut self) -> Builder<T> {
         Builder {builder: self.builder.borrow(), marker: ::std::marker::PhantomData}
     }
 }
