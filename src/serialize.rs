@@ -37,7 +37,7 @@ pub struct SliceSegments<'a> {
 }
 
 impl <'a> message::ReaderSegments for SliceSegments<'a> {
-    fn get_segment(&self, id: u32) -> Option<&[Word]> {
+    fn get_segment<'b>(&'b self, id: u32) -> Option<&'b [Word]> {
         if id < self.segment_slices.len() as u32 {
             let (a, b) = self.segment_slices[id as usize];
             Some(&self.words[a..b])
@@ -48,9 +48,9 @@ impl <'a> message::ReaderSegments for SliceSegments<'a> {
 }
 
 /// Reads a serialized message from a slice of words.
-pub fn read_message_from_words(slice: &[Word],
-                               options: message::ReaderOptions)
-                               -> Result<message::Reader<SliceSegments>>
+pub fn read_message_from_words<'a>(slice: &'a [Word],
+                                   options: message::ReaderOptions)
+                                   -> Result<message::Reader<SliceSegments<'a>>>
 {
     let mut bytes = ::Word::words_to_bytes(slice);
     let (num_words, offsets) = try!(read_segment_table(&mut bytes, options));
@@ -70,7 +70,7 @@ pub struct OwnedSegments {
 }
 
 impl ::message::ReaderSegments for OwnedSegments {
-    fn get_segment(&self, id: u32) -> Option<&[Word]> {
+    fn get_segment<'a>(&'a self, id: u32) -> Option<&'a [Word]> {
         if id < self.segment_slices.len() as u32 {
             let (a, b) = self.segment_slices[id as usize];
             Some(&self.owned_space[a..b])
@@ -180,10 +180,12 @@ fn flatten_segments(segments: &[&[Word]]) -> Vec<Word> {
     }
     {
         let mut bytes = ::Word::words_to_bytes_mut(&mut result[..]);
-        write_segment_table(&mut bytes, &*segments).expect("Failed to write segment table.");
+        write_segment_table(&mut bytes, &*segments).ok().expect("Failed to write segment table.");
     }
     for segment in &*segments {
-        result.extend(*segment);
+        for idx in 0..segment.len() {
+            result.push(segment[idx]);
+        }
     }
     result
 }
@@ -219,7 +221,7 @@ where W: Write {
                     &mut buf[(idx - 1) * 4..idx * 4], segments[idx].len() as u32);
             }
             if segment_count == 2 {
-                for tgt in &mut buf[4..8] { *tgt = 0; }
+                for idx in 4..8 { buf[idx] = 0 }
             }
             try!(write.write_all(&buf));
         } else {
@@ -229,8 +231,7 @@ where W: Write {
                     &mut buf[(idx - 1) * 4..idx * 4], segments[idx].len() as u32);
             }
             if segment_count % 2 == 0 {
-                let len = buf.len();
-                for tgt in &mut buf[len - 4..] { *tgt = 0; }
+                for idx in (buf.len() - 4)..(buf.len()) { buf[idx] = 0 }
             }
             try!(write.write_all(&buf));
         }

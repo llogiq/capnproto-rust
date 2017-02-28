@@ -42,7 +42,7 @@ impl ReadLimiter {
     pub fn can_read(&self, amount: u64) -> Result<()> {
         let current = self.limit.get();
         if amount > current {
-            Err(Error::failed("read limit exceeded".to_string()))
+            Err(Error::failed(format!("read limit exceeded")))
         } else {
             self.limit.set(current - amount);
             Ok(())
@@ -83,7 +83,7 @@ impl <S> ReaderArenaImpl <S> where S: ReaderSegments {
 }
 
 impl <S> ReaderArena for ReaderArenaImpl<S> where S: ReaderSegments {
-    fn get_segment(&self, id: u32) -> Result<(*const Word, u32)> {
+    fn get_segment<'a>(&'a self, id: u32) -> Result<(*const Word, u32)> {
         match self.segments.get_segment(id) {
             Some(seg) => Ok((seg.as_ptr(), seg.len() as u32)),
             None => Err(Error::failed(format!("Invalid segment id: {}", id))),
@@ -96,7 +96,7 @@ impl <S> ReaderArena for ReaderArenaImpl<S> where S: ReaderSegments {
         let this_end: usize = this_begin + (segment_len as usize * 8);
 
         if !(from as usize >= this_begin && to as usize <= this_end && from as usize <= to as usize) {
-            Err(Error::failed("message contained out-of-bounds pointer".to_string()))
+            Err(Error::failed(format!("message contained out-of-bounds pointer")))
         } else {
             self.read_limiter.can_read((to as usize - from as usize) as u64 / BYTES_PER_WORD as u64)
         }
@@ -117,7 +117,7 @@ pub trait BuilderArena: ReaderArena {
     fn allocate(&self, segment_id: u32, amount: WordCount32) -> Option<u32>;
     fn allocate_anywhere(&self, amount: u32) -> (SegmentId, u32);
     fn get_segment_mut(&self, id: u32) -> (*mut Word, u32);
-    fn as_reader(&self) -> &ReaderArena;
+    fn as_reader<'a>(&'a self) -> &'a ReaderArena;
 }
 
 pub struct BuilderArenaImplInner<A> where A: Allocator {
@@ -147,7 +147,7 @@ impl <A> BuilderArenaImpl<A> where A: Allocator {
         self.inner.borrow_mut().allocate_segment(minimum_size)
     }
 
-    pub fn get_segments_for_output(&self) -> OutputSegments {
+    pub fn get_segments_for_output<'a>(&'a self) -> OutputSegments<'a> {
         let reff = self.inner.borrow();
         if reff.allocated.len() == 1 {
             let seg = reff.segments[0];
@@ -213,8 +213,9 @@ impl <A> BuilderArenaImplInner<A> where A: Allocator {
         // first try the existing segments, then try allocating a new segment.
         let allocated_len = self.allocated.len() as u32;
         for segment_id in 0.. allocated_len {
-            if let Some(idx) = self.allocate(segment_id, amount) {
-                return (segment_id, idx)
+            match self.allocate(segment_id, amount) {
+                Some(idx) => return (segment_id, idx),
+                None => (),
             }
         }
 
@@ -244,14 +245,14 @@ impl <A> BuilderArena for BuilderArenaImpl<A> where A: Allocator {
         self.inner.borrow_mut().get_segment_mut(id)
     }
 
-    fn as_reader(&self) -> &ReaderArena {
+    fn as_reader<'a>(&'a self) -> &'a ReaderArena {
         self
     }
 }
 
 impl <A> Drop for BuilderArenaImplInner<A> where A: Allocator {
     fn drop(&mut self) {
-        if !self.allocated.is_empty() {
+        if self.allocated.len() > 0 {
             self.allocator.pre_drop(self.allocated[0]);
         }
     }
@@ -261,7 +262,7 @@ pub struct NullArena;
 
 impl ReaderArena for NullArena {
     fn get_segment(&self, _id: u32) -> Result<(*const Word, u32)> {
-        Err(Error::failed("tried to read from null arena".to_string()))
+        Err(Error::failed(format!("tried to read from null arena")))
     }
 
     fn contains_interval(&self, _id: u32, _from: *const Word, _to: *const Word) -> Result<()> {
@@ -286,7 +287,7 @@ impl BuilderArena for NullArena {
         (::std::ptr::null_mut(), 0)
     }
 
-    fn as_reader(&self) -> &ReaderArena {
+    fn as_reader<'a>(&'a self) -> &'a ReaderArena {
         self
     }
 }

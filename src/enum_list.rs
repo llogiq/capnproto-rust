@@ -45,8 +45,8 @@ pub struct Reader<'a, T> {
 }
 
 impl <'a, T: FromU16> Reader<'a, T> {
-    pub fn new(reader: ListReader) -> Reader<T> {
-        Reader { reader: reader, marker: PhantomData }
+    pub fn new<'b>(reader: ListReader<'b>) -> Reader<'b, T> {
+        Reader::<'b, T> { reader: reader, marker: PhantomData }
     }
 
     pub fn len(&self) -> u32 { self.reader.len() }
