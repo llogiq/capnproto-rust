@@ -35,7 +35,7 @@ impl<'a> ::traits::Owned<'a> for Owned {
 
 pub type Reader<'a> = &'a str;
 
-pub fn new_reader<'a>(v : &'a [u8]) -> Result<Reader<'a>> {
+pub fn new_reader(v : &[u8]) -> Result<Reader> {
     match str::from_utf8(v) {
         Ok(v) => Ok(v),
         Err(e) => Err(Error::failed(
@@ -55,12 +55,11 @@ pub struct Builder<'a> {
 }
 
 impl <'a> Builder <'a> {
-    pub fn new<'b>(bytes: &'b mut [u8], pos: u32) -> Result<Builder<'b>> {
+    pub fn new(bytes: &mut [u8], pos: u32) -> Result<Builder> {
         if pos != 0 {
-            match str::from_utf8(bytes) {
-                Err(e) => return Err(Error::failed(
-                    format!("Text contains non-utf8 data: {:?}", e))),
-                _ => {}
+            if let Err(e) = str::from_utf8(bytes) {
+                return Err(Error::failed(
+                    format!("Text contains non-utf8 data: {:?}", e)));
             }
         }
         Ok(Builder { bytes: bytes, pos: pos as usize })
@@ -74,8 +73,8 @@ impl <'a> Builder <'a> {
 
     pub fn push_str(&mut self, string: &str) {
         let bytes = string.as_bytes();
-        for ii in 0..bytes.len() {
-            self.bytes[self.pos + ii] = bytes[ii];
+        for (src, tgt) in bytes.iter().zip(self.bytes[self.pos..].iter_mut()) {
+            *tgt = *src;
         }
         self.pos += bytes.len();
     }
@@ -90,14 +89,14 @@ impl <'a> Builder <'a> {
 
 impl <'a> ops::Deref for Builder <'a> {
     type Target = str;
-    fn deref<'b>(&'b self) -> &'b str {
+    fn deref(&self) -> &str {
         str::from_utf8(self.bytes)
             .expect("text::Builder contents are checked for utf8-validity upon construction")
     }
 }
 
 impl <'a> convert::AsRef<str> for Builder<'a> {
-    fn as_ref<'b>(&'b self) -> &'b str {
+    fn as_ref(&self) -> &str {
         str::from_utf8(self.bytes)
             .expect("text::Builder contents are checked for utf8-validity upon construction")
     }

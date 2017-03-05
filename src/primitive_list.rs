@@ -45,8 +45,8 @@ pub struct Reader<'a, T> where T: PrimitiveElement {
 }
 
 impl <'a, T: PrimitiveElement> Reader<'a, T> {
-    pub fn new<'b>(reader: ListReader<'b>) -> Reader<'b, T> {
-        Reader::<'b, T> { reader: reader, marker: marker::PhantomData }
+    pub fn new(reader: ListReader) -> Reader<T> {
+        Reader { reader: reader, marker: marker::PhantomData }
     }
 
     pub fn len(&self) -> u32 { self.reader.len() }

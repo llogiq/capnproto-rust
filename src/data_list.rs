@@ -90,7 +90,7 @@ impl <'a> Builder<'a> {
         self.builder.borrow().get_pointer_element(index).set_data(value);
     }
 
-    pub fn borrow<'b>(&'b mut self) -> Builder<'b> {
+    pub fn borrow(&mut self) -> Builder {
         Builder {builder: self.builder.borrow()}
     }
 }

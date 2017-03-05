@@ -52,8 +52,8 @@ impl <'a, T> Clone for Reader<'a, T> where T: for<'b> ::traits::OwnedStruct<'b> 
 impl <'a, T> Copy for Reader<'a, T> where T: for<'b> ::traits::OwnedStruct<'b> {}
 
 impl <'a, T> Reader<'a, T> where T: for<'b> ::traits::OwnedStruct<'b> {
-    pub fn new<'b>(reader : ListReader<'b>) -> Reader<'b, T> {
-        Reader::<'b, T> { reader : reader, marker : PhantomData }
+    pub fn new(reader: ListReader) -> Reader<T> {
+        Reader::<T> { reader: reader, marker: PhantomData }
     }
 
     pub fn len(&self) -> u32 { self.reader.len() }
@@ -64,8 +64,8 @@ impl <'a, T> Reader<'a, T> where T: for<'b> ::traits::OwnedStruct<'b> {
 }
 
 impl <'a, T> Reader<'a, T> where T: for<'b> ::traits::OwnedStruct<'b> {
-    pub fn borrow<'b>(&'b self) -> Reader<'b, T>  {
-        Reader { reader: self.reader, marker: PhantomData }
+    pub fn borrow(&self) -> Reader<T>  {
+        Reader {reader: self.reader, marker: PhantomData}
     }
 }
 
@@ -114,7 +114,7 @@ impl <'a, T> Builder<'a, T> where T: for<'b> ::traits::OwnedStruct<'b> {
 }
 
 impl <'a, T> Builder<'a, T> where T: for<'b> ::traits::OwnedStruct<'b> {
-    pub fn borrow<'b>(&'b mut self) -> Builder<'b, T> {
+    pub fn borrow(&mut self) -> Builder<T> {
         Builder { builder: self.builder, marker: PhantomData }
     }
 }

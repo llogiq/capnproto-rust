@@ -79,7 +79,7 @@ pub trait FromPointerBuilderRefDefault<'a> {
 }
 
 pub trait SetPointerBuilder<To> {
-    fn set_pointer_builder<'a>(PointerBuilder<'a>, Self) -> Result<()>;
+    fn set_pointer_builder(PointerBuilder, Self) -> Result<()>;
 }
 
 pub trait Imbue<'a> {
@@ -125,9 +125,9 @@ impl <U, T : IndexMove<u32, U>> ::std::iter::Iterator for ListIter<T, U> {
         if self.index < self.size {
             let result = self.list.index_move(self.index);
             self.index += 1;
-            return Some(result);
+            Some(result)
         } else {
-            return None;
+            None
         }
     }
 
@@ -138,8 +138,7 @@ impl <U, T : IndexMove<u32, U>> ::std::iter::Iterator for ListIter<T, U> {
     fn nth(&mut self, p: usize) -> Option<U>{
         if p < self.size as usize {
             self.index = p as u32;
-            let result = self.list.index_move(self.index);
-            return Some(result)
+            Some(self.list.index_move(self.index))
         } else {
             None
         }
